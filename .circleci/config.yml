@@ -41,9 +41,9 @@ jobs:
       - run: |
           npm install
       - run:
-          name: test
+          name: Analyze
           command: | 
-            npm run test	
+            npm run audit	
   # Analyze:
   #   <<: *defaults
   #   steps:
