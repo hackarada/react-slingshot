@@ -20,10 +20,6 @@ jobs:
       - run:
           name: lint
           command: npm run lint
-      # - run:
-      #     name: "print hello"
-      #     command: "echo Hello "
-
   Test:
     <<: *defaults
     steps:
@@ -43,44 +39,7 @@ jobs:
       - run:
           name: Analyze
           command: | 
-            npm run audit	
-  # Analyze:
-  #   <<: *defaults
-  #   steps:
-  #     - run: mkdir -p workspace
-  #     - run:
-  #         name: save to file
-  #         command: |
-  #           echo "testing file sharing" > workspace/out.txt
-  #     - persist_to_workspace:
-  #         # Must be an absolute  path, or relative path from working_directory. This is a directory on the container which is
-  #         # taken to be the root directory of the workspace.
-  #         root: workspace
-  #         # Must be relative path from root
-  #         paths:
-  #           - out.txt
-  # print_output_file:
-  #   <<: *defaults
-  #   steps:
-  #     - attach_workspace:
-  #         # Must be absolute path or relative path from working_directory
-  #         at: workspace
-  #     - run: |
-  #        cat ~/project/workspace/out.txt
-  # print_workflow:
-  #   <<: *defaults
-  #   steps:
-  #     - print_pipeline_id
-  #     - run: |
-  #         echo "Testing when:onfaile ..."
-  #     # interoducing intentional Error or just use exit 1/return 1 (bash)
-  #     - run: |
-  #         cd testing 
-  #     - run:
-  #         name: run when fail
-  #         command: echo "Fail Check Print_Workflow"
-  #         when: on_fail
-
+            npm run analyze-bundle	
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
