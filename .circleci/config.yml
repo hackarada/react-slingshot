@@ -1,3 +1,9 @@
+defaults: &defaults
+  docker:
+    - image: circleci/node:13.8.0
+  working_directory: ~/project
+
+
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
@@ -5,22 +11,86 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+  Build:
+    <<: *defaults
     steps:
       - checkout
+      - run: |
+          npm install
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: lint
+          command: npm run lint
+      # - run:
+      #     name: "print hello"
+      #     command: "echo Hello "
+
+  Test:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: |
+          npm install
+      - run:
+          name: test
+          command: | 
+            npm run test	
+    Analyze:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: |
+          npm install
+      - run:
+          name: test
+          command: | 
+            npm run test	
+  # Analyze:
+  #   <<: *defaults
+  #   steps:
+  #     - run: mkdir -p workspace
+  #     - run:
+  #         name: save to file
+  #         command: |
+  #           echo "testing file sharing" > workspace/out.txt
+  #     - persist_to_workspace:
+  #         # Must be an absolute  path, or relative path from working_directory. This is a directory on the container which is
+  #         # taken to be the root directory of the workspace.
+  #         root: workspace
+  #         # Must be relative path from root
+  #         paths:
+  #           - out.txt
+  # print_output_file:
+  #   <<: *defaults
+  #   steps:
+  #     - attach_workspace:
+  #         # Must be absolute path or relative path from working_directory
+  #         at: workspace
+  #     - run: |
+  #        cat ~/project/workspace/out.txt
+  # print_workflow:
+  #   <<: *defaults
+  #   steps:
+  #     - print_pipeline_id
+  #     - run: |
+  #         echo "Testing when:onfaile ..."
+  #     # interoducing intentional Error or just use exit 1/return 1 (bash)
+  #     - run: |
+  #         cd testing 
+  #     - run:
+  #         name: run when fail
+  #         command: echo "Fail Check Print_Workflow"
+  #         when: on_fail
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
+  workflow:
     jobs:
-      - say-hello
+      - Build
+      - Test:
+          requires:
+            - Build
+      - Analyze:
+          requires:
+            - Test
